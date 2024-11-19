@@ -5,16 +5,24 @@ title: LerpCam (classic)- Camera Interpolation
 
 # LerpCam (Classic)
 
+[Github](https://github.com/arcadeperfect/nuke_harding_nodes/blob/main/groups/lerpcam_classic.nk)
+<!-- https://github.com/arcadeperfect/nuke_harding_nodes/blob/main/groups/lerpcam_classic.nk -->
+
+
 Tool for interpolating between two cameras.
 
 Plug a camera into each input, and animate the Lerp knob.
 
 It can be used as a camera directly, or you can use the button to generate an expression linked one.
 
-This is for the "classic" cameras (Camera3), not the camera in the new 3D system.
+*For classic cameras (Camera3) only*{.info}
+
+
 
 {% raw %}
 ```python
+# THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+
 set cut_paste_input [stack 0]
 version 15.0 v4
 push 0

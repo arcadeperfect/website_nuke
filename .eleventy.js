@@ -1,9 +1,23 @@
 const syntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
+const markdownIt = require("markdown-it");
+const markdownItAttrs = require("markdown-it-attrs");
 
-module.exports = function(eleventyConfig) {
+module.exports = function (eleventyConfig) {
+
+  // Configure markdown-it with markdown-it-attrs
+  const markdownItOptions = {
+    html: true,
+    breaks: true,
+    linkify: true
+  };
+  const markdownLib = markdownIt(markdownItOptions).use(markdownItAttrs);
+
+  eleventyConfig.setLibrary("md", markdownLib);
+
+
   // Add syntax highlighting
   eleventyConfig.addPlugin(syntaxHighlight);
-  
+
   // Copy static assets
   eleventyConfig.addPassthroughCopy("src/css");
   eleventyConfig.addPassthroughCopy("src/js");

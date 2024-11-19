@@ -1,66 +1,101 @@
 /* css/style.css */
 :root {
-    --bg-color: #1e1e1e;
-    --text-color: #d4d4d4;
-    --code-bg: #2d2d2d;
-  }
-  
+  --bg-primary: rgb(70.72% 10.83% 21.89%);
+  --bg-secondary: #af3939;
+  --bg-code: #b06f6f;
+  --text-primary: #d4d4d4;
+  --accent: #7daf49;
+  --link-color: #000000;
+  --link-visited: #000000;
+  --button-bg: #7daf49;
+  --button-hover: #ff8c00;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, system-ui, sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 1rem;
+}
+
+pre[class*="language-"] {
+  position: relative;
+  margin: 2rem 0;
+  padding: 2rem;
+  border-radius: 4px;
+  max-width: 95vw;
+  overflow-x: auto;
+  background: var(--bg-code);
+}
+
+.copy-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.5rem;
+  background: var(--button-bg);
+  border: none;
+  border-radius: 4px;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.copy-button:hover {
+  background: var(--button-hover);
+}
+
+article {
+  background: var(--bg-secondary);
+  padding: 2rem;
+  margin: 2rem 0;
+  border-radius: 8px;
+  max-width: 95vw;
+}
+
+h1, h2, h3 {
+  color: var(--accent);
+}
+
+a {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+a:visited {
+  color: var(--link-visited);
+  text-decoration: none;
+}
+
+@media screen and (max-width: 768px) {
   body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-family: -apple-system, system-ui, sans-serif;
-    line-height: 1.6;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
   }
-  
-  pre[class*="language-"] {
-    position: relative;
-    margin: 2rem 0;
-    padding: 2rem;
-    border-radius: 4px;
-  }
-  
-  .copy-button {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    padding: 0.5rem;
-    background: #444;
-    border: none;
-    border-radius: 4px;
-    color: #fff;
-    cursor: pointer;
-    font-size: 0.875rem;
-  }
-  
-  .copy-button:hover {
-    background: #555;
-  }
-  
-  article {
-    background: #252525;
-    padding: 2rem;
-    margin: 2rem 0;
-    border-radius: 8px;
-  }
-  
-  h1, h2, h3 {
-    color: #7daf49;
-  }
+}
 
-  a {
-    color: #15522d; /* your desired color */
-  }
+.nav {
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 4rem;
+}
 
-  a:visited {
-    color: #a892e6;  /* Or any color you prefer */
-  }
+main {
+  width: 95vw;
+  max-width: 100%;
+}
 
-  .nav {
-    padding: 1rem 0;
-    margin-bottom: 2rem;
-    display: flex;
-    gap: 4rem;  /* Adjust this value to control the exact spacing */
+pre[class*="language-"] code,
+code[class*="language-"] {
+  font-size: 0.9em !important;
+  /* background: var(--bg-code); */
+}
+
+.info {
+  color: var(--accent);
+  font-style: italic;
 }
