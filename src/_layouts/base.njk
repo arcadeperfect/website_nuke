@@ -1,0 +1,23 @@
+<!-- src/_layouts/base.njk -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/prism-tomorrow.css">
+</head>
+<body>
+    <nav class="nav">
+        <a href="/" class="home-link">← Nuke Scripts</a>
+        <a href="https://alexharding.ooo">↑ alexharding.ooo</a>
+
+    </nav>
+    <main>
+        {{ content | safe }}
+    </main>
+    <script src="/js/copy-button.js"></script>
+    <script src="/js/prism.js"></script>
+</body>
+</html>
