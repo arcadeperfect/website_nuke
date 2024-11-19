@@ -47,6 +47,7 @@ module.exports = function(eleventyConfig) {
   });
 
   return {
+    pathPrefix: "/website_nuke/",
     dir: {
       input: "src",
       output: "_site",
