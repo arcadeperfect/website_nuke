@@ -22,7 +22,7 @@ jobs:
       run: npm install
 
     - name: Build the site
-      run: ELEVENTY_ENV=production npx eleventy --pathprefix=website_nuke
+      run: npx eleventy    # Remove the pathprefix parameter
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
