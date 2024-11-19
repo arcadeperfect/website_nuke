@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "eleventy --serve",
-    "build": "eleventy"
+    "build": "ELEVENTY_ENV=production eleventy --pathprefix=website_nuke"
   },
   "keywords": [],
   "author": "",

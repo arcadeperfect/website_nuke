@@ -1,4 +1,3 @@
-// // .eleventy.js
 // const syntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
 
 // module.exports = function(eleventyConfig) {
@@ -10,14 +9,14 @@
 //   eleventyConfig.addPassthroughCopy("src/js");
 //   eleventyConfig.addPassthroughCopy("src/assets");
 
-//   eleventyConfig.setNunjucksLiquidCompatibility(true);
-//   eleventyConfig.setLiquidOptions({
-//     dynamicPartials: false,
-//     strictFilters: false
+//   // Configure Nunjucks to ignore unknown variables
+//   eleventyConfig.setNunjucksEnvironmentOptions({
+//     throwOnUndefined: false,
+//     autoescape: false
 //   });
 
-
 //   return {
+//     pathPrefix: "/website_nuke/",
 //     dir: {
 //       input: "src",
 //       output: "_site",
@@ -38,16 +37,9 @@ module.exports = function(eleventyConfig) {
   // Copy static assets
   eleventyConfig.addPassthroughCopy("src/css");
   eleventyConfig.addPassthroughCopy("src/js");
-  eleventyConfig.addPassthroughCopy("src/assets");
-
-  // Configure Nunjucks to ignore unknown variables
-  eleventyConfig.setNunjucksEnvironmentOptions({
-    throwOnUndefined: false,
-    autoescape: false
-  });
 
   return {
-    pathPrefix: "/website_nuke/",
+    pathPrefix: process.env.ELEVENTY_ENV === "production" ? "/website_nuke/" : "/",
     dir: {
       input: "src",
       output: "_site",
