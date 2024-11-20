@@ -80,7 +80,7 @@ addUserKnob {41 shutter_bias l Bias T lerp_cam.shutter_bias}
 addUserKnob {20 "" l "World matrix" n 2}
 addUserKnob {41 world_matrix l "" -STARTLINE T lerp_cam.world_matrix}
 addUserKnob {20 Info}
-addUserKnob {26 version l "" +STARTLINE T "Lerp Cam v0.1\n\nnuke.alexharding.ooo/lerpcam_classic"}
+addUserKnob {26 version l "" +STARTLINE T "Lerp Cam v0.1\n\nnuke.alexharding.ooo/nodes/lerpcam_classic"}
 }
 NoOp {
 inputs 0

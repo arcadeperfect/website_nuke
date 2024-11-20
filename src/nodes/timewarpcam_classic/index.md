@@ -81,7 +81,7 @@ Group {
  addUserKnob {41 shuttercustomoffset l "" -STARTLINE T Camera1.shuttercustomoffset}
  addUserKnob {41 shutter_bias l Bias T Camera1.shutter_bias}
  addUserKnob {20 Info}
- addUserKnob {26 version l "" +STARTLINE T "Timewarp Cam v0.1\n\n\nnuke.alexharding.ooo/timewarpcam_classic"}
+ addUserKnob {26 version l "" +STARTLINE T "Timewarp Cam v0.1\n\n\nnuke.alexharding.ooo/nodes/timewarpcam_classic"}
 }
  Output {
   inputs 0

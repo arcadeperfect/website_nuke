@@ -9,6 +9,7 @@ title: Nuke Python Scripts
 
 - [Lerp Cam (Classic)]({{ '/nodes/lerpcam_classic' | url }}) - Camera interpolation tool
 - [Timewarp Cam (Classic)]({{ '/nodes/timewarpcam_classic' | url }}) - Camera timewarper
+- [Fancy Grad]({{ '/nodes/fancygrad' | url }}) - Dynamic gradient patch
 
 ## Scripts
 
