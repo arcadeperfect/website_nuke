@@ -144,7 +144,5 @@ Group {
  }
 end_group
 
-end_group
-
 ```
 {% endraw %}
