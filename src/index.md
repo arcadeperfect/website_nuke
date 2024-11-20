@@ -7,7 +7,8 @@ title: Nuke Python Scripts
 
 ## Nodes
 
-- [LerpCam (Classic)]({{ '/nodes/lerpcam_classic' | url }}) - Camera interpolation tool
+- [Lerp Cam (Classic)]({{ '/nodes/lerpcam_classic' | url }}) - Camera interpolation tool
+- [Timewarp Cam (Classic)]({{ '/nodes/timewarpcam_classic' | url }}) - Camera interpolation tool
 
 ## Scripts
 

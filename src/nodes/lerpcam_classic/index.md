@@ -1,6 +1,6 @@
 ---
 layout: base
-title: LerpCam (classic)- Camera Interpolation
+title: Lerp Cam (classic)- Camera Interpolation
 ---
 
 # LerpCam (Classic)
@@ -12,6 +12,8 @@ title: LerpCam (classic)- Camera Interpolation
 Tool for interpolating between two cameras.
 
 Plug a camera into each input, and animate the Lerp knob.
+
+Can be stacked.
 
 It can be used as a camera directly, or you can use the button to generate an expression linked one.
 

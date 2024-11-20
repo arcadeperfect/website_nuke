@@ -22,6 +22,16 @@ Or it can be useful to just smooth out a move for a more hyperlapse look.
 
 *For classic cameras (Camera3) only*{.info}
 
+## Usage
+```python
+cam = nuke.selectedNode() # store the selected camera in a variable
+
+temporal_stabilize(cam) # run the script on that camera
+
+```
+
+## Code
+
 {% raw %}
 ```python
 """
