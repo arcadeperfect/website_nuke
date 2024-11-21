@@ -1,3 +1,16 @@
+"""
+MIT License - see https://opensource.org/licenses/MIT
+Copyright (c) [2024] [alex harding] alexharding.ooo
+Permission is granted to use, copy, modify, and distribute this software and its documentation, provided that all copies include the copyright notice and this permission notice.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+
+Temporal Stabilizer Classic v0.1
+Analyzes a camera's velocity and generates two timewarp nodes.
+The first removes variation in velocity.
+The second reapplies it.
+They can be applied to both the camera and it's associated footage if it was tracked.
+"""
+
 import os
 
 
