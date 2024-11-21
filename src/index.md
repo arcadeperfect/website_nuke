@@ -14,3 +14,4 @@ title: Nuke Python Scripts
 ## Scripts
 
 - [Temporal Stabilizer (Classic)]({{ '/scripts/temporal_stabilizer_classic' | url }}) - Normalizes the velocity a camera
+- [Recursive Load]({{ '/scripts/recursive_load' | url }}) - Recursively scan subdirectories and loads sequences
