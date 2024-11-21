@@ -1,6 +1,6 @@
 ---
 layout: base
-title: Timewarp Cam (classic)- Camera Timewarping
+title: Fancy Grad - Gradient Patch
 ---
 
 # Fancy Grad
