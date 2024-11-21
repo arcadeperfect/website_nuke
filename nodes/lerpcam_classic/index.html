@@ -1,0 +1,177 @@
+<!-- src/_layouts/base.njk -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lerp Cam (classic)- Camera Interpolation</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/prism-tomorrow.css">
+</head>
+<body>
+    <nav class="nav">
+        <a href="/" class="home-link">← nuke</a>
+        <a href="https://alexharding.ooo">↑ alexharding.ooo</a>
+    </nav>
+    <main>
+        <h1>LerpCam (Classic)</h1>
+<p><a href="https://github.com/arcadeperfect/nuke_harding_nodes/blob/main/groups/lerpcam_classic.nk">Github</a></p>
+<!-- https://github.com/arcadeperfect/nuke_harding_nodes/blob/main/groups/lerpcam_classic.nk -->
+<p>Tool for interpolating between two cameras.</p>
+<p>Plug a camera into each input, and animate the Lerp knob.</p>
+<p>Can be stacked.</p>
+<p>It can be used as a camera directly, or you can use the button to generate an expression linked one.</p>
+<p><em class="info">For classic cameras (Camera3) only</em></p>
+<pre class="language-python"><code class="language-python"><span class="token comment"># THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.</span>
+
+<span class="token builtin">set</span> cut_paste_input <span class="token punctuation">[</span>stack <span class="token number">0</span><span class="token punctuation">]</span>
+version <span class="token number">15.0</span> v4
+push <span class="token number">0</span>
+push $cut_paste_input
+Group <span class="token punctuation">{</span>
+inputs <span class="token number">2</span>
+name LerpCam
+selected true
+xpos <span class="token operator">-</span><span class="token number">642</span>
+ypos <span class="token number">215</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">20</span> Controls<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> lrp l Lerp T lerp_cam<span class="token punctuation">.</span>lrp<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">26</span> space l <span class="token string">""</span> <span class="token operator">+</span>STARTLINE T <span class="token string">" "</span><span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">22</span> generate_lerp_cam l <span class="token string">"Generate Lerp Cam"</span> t <span class="token string">"creates a camera with all values lerped between the two input cameras\n"</span> T <span class="token string">"this_node = nuke.thisNode()\n\nnuke.thisGroup().parent().begin()\n\n\nattrs = \[\"translate\", \n        \"rotate\",\n        \"scaling\",\n        \"uniform_scale\",\n        \"skew\",\n        \"pivot_translate\",\n        \"pivot_rotate\",\n        \"focal\",\n        \"haperture\",\n        \"vaperture\",\n        \"near\",\n        \"far\",\n        \"win_translate\",\n        \"win_scale\",\n        \"winroll\",\n        \"focal_point\",\n        \"fstop\",\n        \"shutter\"]\n\ndef link_cam(cam1, cam2, attrs):\n\n    for attr in attrs:\n        cam2\[attr].setExpression(f\"\{cam1.name()\}.\{attr\}\")\n\nlerp_cam = nuke.createNode(\"Camera3\", \"label lerpCam\")\nlerp_cam.setInput(0, None)\nlerp_cam.setInput(1, None)\n\nlink_cam(this_node, lerp_cam, attrs)\n\n    "</span> <span class="token operator">+</span>STARTLINE<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">26</span> divider1 l <span class="token string">""</span> <span class="token operator">+</span>STARTLINE<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">26</span> Instructions l <span class="token string">""</span> <span class="token operator">+</span>STARTLINE T <span class="token string">"Connect a camera to each input and lerp between them.\n\nThis node can be used as a camera or you can use the button to generate an expression linked one"</span><span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">20</span> Camera<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> display l Display T lerp_cam<span class="token punctuation">.</span>display<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> selectable l Selectable T lerp_cam<span class="token punctuation">.</span>selectable<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> transform T lerp_cam<span class="token punctuation">.</span>transform<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> file_menu l @FolderIcon T lerp_cam<span class="token punctuation">.</span>file_menu<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> snap_menu l @AxisIcon T lerp_cam<span class="token punctuation">.</span>snap_menu<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> xform_order l <span class="token string">"Transform Order"</span> T lerp_cam<span class="token punctuation">.</span>xform_order<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> rot_order l <span class="token string">"Rotation Order"</span> T lerp_cam<span class="token punctuation">.</span>rot_order<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> translate l Translate T lerp_cam<span class="token punctuation">.</span>translate<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> rotate l Rotate T lerp_cam<span class="token punctuation">.</span>rotate<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> scaling l Scale T lerp_cam<span class="token punctuation">.</span>scaling<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> uniform_scale l <span class="token string">"Uniform Scale"</span> T lerp_cam<span class="token punctuation">.</span>uniform_scale<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> skew l Skew T lerp_cam<span class="token punctuation">.</span>skew<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> pivot_translate l <span class="token string">"Pivot Translate"</span> T lerp_cam<span class="token punctuation">.</span>pivot_translate<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> pivot_rotate l <span class="token string">"Pivot Rotate"</span> T lerp_cam<span class="token punctuation">.</span>pivot_rotate<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">20</span> <span class="token string">""</span> l <span class="token string">"Local Matrix"</span> n <span class="token number">2</span><span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> useMatrix l <span class="token string">"Specify Matrix"</span> T lerp_cam<span class="token punctuation">.</span>useMatrix<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> matrix l <span class="token string">""</span> <span class="token operator">-</span>STARTLINE T lerp_cam<span class="token punctuation">.</span>matrix<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">20</span> Projection<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> projection_mode l Projection T lerp_cam<span class="token punctuation">.</span>projection_mode<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">26</span> <span class="token string">""</span><span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> world_to_meters l <span class="token string">"World to Meters"</span> T lerp_cam<span class="token punctuation">.</span>world_to_meters<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> focal l <span class="token string">"Focal Length"</span> T lerp_cam<span class="token punctuation">.</span>focal<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> haperture l <span class="token string">"Horizontal Aperture"</span> T lerp_cam<span class="token punctuation">.</span>haperture<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> vaperture l <span class="token string">"Vertical Aperture"</span> T lerp_cam<span class="token punctuation">.</span>vaperture<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> near l Near T lerp_cam<span class="token punctuation">.</span>near<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> far l Far T lerp_cam<span class="token punctuation">.</span>far<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> win_translate l <span class="token string">"Window Translate"</span> T lerp_cam<span class="token punctuation">.</span>win_translate<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> win_scale l <span class="token string">"Window Scale"</span> T lerp_cam<span class="token punctuation">.</span>win_scale<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> winroll l <span class="token string">"Window Roll"</span> T lerp_cam<span class="token punctuation">.</span>winroll<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> focal_point l <span class="token string">"Focal Distance"</span> T lerp_cam<span class="token punctuation">.</span>focal_point<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> fstop l Fstop T lerp_cam<span class="token punctuation">.</span>fstop<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> shutter l Shutter T lerp_cam<span class="token punctuation">.</span>shutter<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> shutteroffset l <span class="token string">"Shutter Offset"</span> T lerp_cam<span class="token punctuation">.</span>shutteroffset<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> shuttercustomoffset l <span class="token string">""</span> <span class="token operator">-</span>STARTLINE T lerp_cam<span class="token punctuation">.</span>shuttercustomoffset<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> shutter_bias l Bias T lerp_cam<span class="token punctuation">.</span>shutter_bias<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">20</span> <span class="token string">""</span> l <span class="token string">"World matrix"</span> n <span class="token number">2</span><span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">41</span> world_matrix l <span class="token string">""</span> <span class="token operator">-</span>STARTLINE T lerp_cam<span class="token punctuation">.</span>world_matrix<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">20</span> Info<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">26</span> version l <span class="token string">""</span> <span class="token operator">+</span>STARTLINE T <span class="token string">"Lerp Cam v0.1\n\nnuke.alexharding.ooo/nodes/lerpcam_classic"</span><span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+NoOp <span class="token punctuation">{</span>
+inputs <span class="token number">0</span>
+name NoOp1
+xpos <span class="token number">281</span>
+ypos <span class="token number">77</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">20</span> User<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">13</span> translate<span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+Input <span class="token punctuation">{</span>
+inputs <span class="token number">0</span>
+name Cam_1
+xpos <span class="token operator">-</span><span class="token number">20</span>
+ypos <span class="token number">15</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">20</span> User<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">13</span> t<span class="token punctuation">}</span>
+t <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>translate<span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>translate<span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>translate<span class="token punctuation">}</span><span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">13</span> r<span class="token punctuation">}</span>
+r <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>rotate<span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>rotate<span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>rotate<span class="token punctuation">}</span><span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">13</span> s<span class="token punctuation">}</span>
+s <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>scaling<span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>scaling<span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>scaling<span class="token punctuation">}</span><span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">7</span> focal<span class="token punctuation">}</span>
+focal <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>focal<span class="token punctuation">}</span><span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">7</span> hap<span class="token punctuation">}</span>
+hap <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>haperture<span class="token punctuation">}</span><span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">7</span> vap<span class="token punctuation">}</span>
+vap <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>vaperture<span class="token punctuation">}</span><span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">7</span> near<span class="token punctuation">}</span>
+near <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>near<span class="token punctuation">}</span><span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">7</span> far<span class="token punctuation">}</span>
+far <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>far<span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+Input <span class="token punctuation">{</span>
+inputs <span class="token number">0</span>
+name Cam_2
+xpos <span class="token number">102</span>
+ypos <span class="token number">15</span>
+number <span class="token number">1</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">20</span> User<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">13</span> t<span class="token punctuation">}</span>
+t <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>translate<span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>translate<span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>translate<span class="token punctuation">}</span><span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">13</span> r<span class="token punctuation">}</span>
+r <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>rotate<span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>rotate<span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>rotate<span class="token punctuation">}</span><span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">13</span> s<span class="token punctuation">}</span>
+s <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>scaling<span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>scaling<span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>scaling<span class="token punctuation">}</span><span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">7</span> focal<span class="token punctuation">}</span>
+focal <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>focal<span class="token punctuation">}</span><span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">7</span> hap<span class="token punctuation">}</span>
+hap <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>haperture<span class="token punctuation">}</span><span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">7</span> vap<span class="token punctuation">}</span>
+vap <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>vaperture<span class="token punctuation">}</span><span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">7</span> near<span class="token punctuation">}</span>
+near <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>near<span class="token punctuation">}</span><span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">7</span> far<span class="token punctuation">}</span>
+far <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token builtin">input</span><span class="token punctuation">.</span>far<span class="token punctuation">}</span><span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+Camera3 <span class="token punctuation">{</span>
+inputs <span class="token number">0</span>
+translate <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token string">"lerp(input0.translate, input1.translate, lrp)"</span> x1 <span class="token number">70.9417038</span><span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token string">"lerp(input0.translate, input1.translate, lrp)"</span> x1 <span class="token operator">-</span><span class="token number">146.4225159</span><span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token string">"lerp(input0.translate, input1.translate, lrp)"</span> x1 <span class="token number">56.61929703</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+rotate <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token string">"lerp(input0.rotate, input1.rotate, lrp)"</span> x1 <span class="token operator">-</span><span class="token number">59.89097977</span><span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token string">"lerp(input0.rotate, input1.rotate, lrp)"</span> x1 <span class="token operator">-</span><span class="token number">53.29590607</span><span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token string">"lerp(input0.rotate, input1.rotate, lrp)"</span> x1 <span class="token number">56.45447159</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+scaling <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token string">"lerp(input0.scaling, input1.scaling, lrp)"</span><span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token string">"lerp(input0.scaling, input1.scaling, lrp)"</span><span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token string">"lerp(input0.scaling, input1.scaling, lrp)"</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+uniform_scale <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token string">"lerp(input0.uniform_scale, input1.uniform_scale, lrp)"</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+skew <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token string">"lerp(input0.skew, input1.skew, lrp)"</span><span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token string">"lerp(input0.skew, input1.skew, lrp)"</span><span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token string">"lerp(input0.skew, input1.skew, lrp)"</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+pivot_translate <span class="token punctuation">{</span><span class="token punctuation">{</span>lerp<span class="token punctuation">(</span>input0<span class="token punctuation">.</span>pivot_translate<span class="token punctuation">,</span>input1<span class="token punctuation">.</span>pivot_translate<span class="token punctuation">,</span>lrp<span class="token punctuation">)</span> x1 <span class="token number">0</span><span class="token punctuation">}</span> <span class="token punctuation">{</span>lerp<span class="token punctuation">(</span>input0<span class="token punctuation">.</span>pivot_translate<span class="token punctuation">,</span>input1<span class="token punctuation">.</span>pivot_translate<span class="token punctuation">,</span>lrp<span class="token punctuation">)</span> x1 <span class="token number">0</span><span class="token punctuation">}</span> <span class="token punctuation">{</span>lerp<span class="token punctuation">(</span>input0<span class="token punctuation">.</span>pivot_translate<span class="token punctuation">,</span>input1<span class="token punctuation">.</span>pivot_translate<span class="token punctuation">,</span>lrp<span class="token punctuation">)</span> x1 <span class="token number">0</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+pivot_rotate <span class="token punctuation">{</span><span class="token punctuation">{</span>lerp<span class="token punctuation">(</span>input0<span class="token punctuation">.</span>pivot_rotate<span class="token punctuation">,</span>input1<span class="token punctuation">.</span>pivot_rotate<span class="token punctuation">,</span>lrp<span class="token punctuation">)</span> x1 <span class="token number">1.212044026e-06</span><span class="token punctuation">}</span> <span class="token punctuation">{</span>lerp<span class="token punctuation">(</span>input0<span class="token punctuation">.</span>pivot_rotate<span class="token punctuation">,</span>input1<span class="token punctuation">.</span>pivot_rotate<span class="token punctuation">,</span>lrp<span class="token punctuation">)</span> x1 <span class="token operator">-</span><span class="token number">1.787765359e-05</span><span class="token punctuation">}</span> <span class="token punctuation">{</span>lerp<span class="token punctuation">(</span>input0<span class="token punctuation">.</span>pivot_rotate<span class="token punctuation">,</span>input1<span class="token punctuation">.</span>pivot_rotate<span class="token punctuation">,</span>lrp<span class="token punctuation">)</span> x1 <span class="token operator">-</span><span class="token number">176.2310181</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+focal <span class="token punctuation">{</span><span class="token punctuation">{</span>lerp<span class="token punctuation">(</span>input0<span class="token punctuation">.</span>focal<span class="token punctuation">,</span>input1<span class="token punctuation">.</span>focal<span class="token punctuation">,</span>lrp<span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+haperture <span class="token punctuation">{</span><span class="token punctuation">{</span>lerp<span class="token punctuation">(</span>input0<span class="token punctuation">.</span>haperture<span class="token punctuation">,</span>input1<span class="token punctuation">.</span>haperture<span class="token punctuation">,</span>lrp<span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+vaperture <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token string">"lerp(input0.vaperture, input1.vaperture, lrp)"</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+near <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token string">"lerp(input0.near, input1.near, lrp)"</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+far <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token string">"lerp(input0.far, input1.far, lrp)"</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+win_translate <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token string">"lerp(input0.win_translate, input1.win_translate, lrp)"</span><span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token string">"lerp(input0.win_translate, input1.win_translate, lrp)"</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+win_scale <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token string">"lerp(input0.win_scale, input1.win_scale, lrp)"</span><span class="token punctuation">}</span> <span class="token punctuation">{</span><span class="token string">"lerp(input0.win_scale, input1.win_scale, lrp)"</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+winroll <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token string">"lerp(input0.winroll, input1.winroll, lrp)"</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+focal_point <span class="token punctuation">{</span><span class="token punctuation">{</span>lerp<span class="token punctuation">(</span>input0<span class="token punctuation">.</span>focal_point<span class="token punctuation">,</span>input1<span class="token punctuation">.</span>focal_point<span class="token punctuation">,</span>lrp<span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+fstop <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token string">"lerp(input0.fstop, input1.fstop, lrp)"</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+shutter <span class="token punctuation">{</span><span class="token punctuation">{</span><span class="token string">"lerp(input0.shutter, input1.shutter, lrp)"</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+name lerp_cam
+selected true
+xpos <span class="token number">38</span>
+ypos <span class="token number">143</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">20</span> User<span class="token punctuation">}</span>
+addUserKnob <span class="token punctuation">{</span><span class="token number">7</span> lrp<span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+Output <span class="token punctuation">{</span>
+name Output1
+xpos <span class="token number">56</span>
+ypos <span class="token number">374</span>
+<span class="token punctuation">}</span>
+end_group</code></pre>
+
+    </main>
+    <script src="/js/copy-button.js"></script>
+    <script src="/js/prism.js"></script>
+</body>
+</html>

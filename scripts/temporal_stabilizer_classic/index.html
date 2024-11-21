@@ -1,0 +1,135 @@
+<!-- src/_layouts/base.njk -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LerpCam (classic)- Camera Interpolation</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/prism-tomorrow.css">
+</head>
+<body>
+    <nav class="nav">
+        <a href="/" class="home-link">← nuke</a>
+        <a href="https://alexharding.ooo">↑ alexharding.ooo</a>
+    </nav>
+    <main>
+        <h1>Temporal Stabilizer (Classic)</h1>
+<p><a href="https://github.com/arcadeperfect/nuke_harding_python/blob/main/src/nuke_harding_python/scripts/temporal_stab_classic.py">Github</a></p>
+<p>A script that normalizes the velocity of the motion of a camera.</p>
+<p>It generates two timewarp nodes, one to remove variation in velocity, and one to reapply it.</p>
+<p>They can be applied to the camera, or the footage if it was tracked.</p>
+<p>This can be useful for transition shots where you want to blend between two cameras seamlessly (see <a href="/nodes/lerpcam_classic">LerpCam</a>). Often the speed of the camera move will slow or be irregular during the regions you want to blend, since it is usually at the end of the move.</p>
+<p>Use this script to normalize the velocity, do the stitch, and selectively reintroduce the velocity curves to the stitched camera as desired.</p>
+<p>Or it can be useful to just smooth out a move for a more hyperlapse look.</p>
+<p><em class="info">For classic cameras (Camera3) only</em></p>
+<h2>Usage</h2>
+<pre class="language-python"><code class="language-python">cam <span class="token operator">=</span> nuke<span class="token punctuation">.</span>selectedNode<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment"># store the selected camera in a variable</span>
+
+temporal_stabilize<span class="token punctuation">(</span>cam<span class="token punctuation">)</span> <span class="token comment"># run the script on that camera</span>
+</code></pre>
+<h2>Code</h2>
+<pre class="language-python"><code class="language-python"><span class="token triple-quoted-string string">"""
+MIT License - see https://opensource.org/licenses/MIT
+Copyright (c) [2024] [alex harding] alexharding.ooo
+Permission is granted to use, copy, modify, and distribute this software and its documentation, provided that all copies include the copyright notice and this permission notice.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+
+Temporal Stabilizer Classic v0.1
+Analyzes a camera's velocity and generates two timewarp nodes.
+The first removes variation in velocity.
+The second reapplies it.
+They can be applied to both the camera and it's associated footage if it was tracked.
+"""</span>
+
+<span class="token keyword">import</span> math
+<span class="token keyword">import</span> nuke
+
+
+<span class="token keyword">class</span> <span class="token class-name">Vec3</span><span class="token punctuation">:</span>
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> x<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">,</span> y<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">,</span> z<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>x <span class="token operator">=</span> x
+        self<span class="token punctuation">.</span>y <span class="token operator">=</span> y
+        self<span class="token punctuation">.</span>z <span class="token operator">=</span> z
+
+    <span class="token decorator annotation punctuation">@staticmethod</span>
+    <span class="token keyword">def</span> <span class="token function">get_distance</span><span class="token punctuation">(</span>a<span class="token punctuation">,</span> b<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        dx <span class="token operator">=</span> b<span class="token punctuation">.</span>x <span class="token operator">-</span> a<span class="token punctuation">.</span>x
+        dy <span class="token operator">=</span> b<span class="token punctuation">.</span>y <span class="token operator">-</span> a<span class="token punctuation">.</span>y
+        dz <span class="token operator">=</span> b<span class="token punctuation">.</span>z <span class="token operator">-</span> a<span class="token punctuation">.</span>z
+        <span class="token keyword">return</span> math<span class="token punctuation">.</span>sqrt<span class="token punctuation">(</span>dx<span class="token operator">**</span><span class="token number">2</span> <span class="token operator">+</span> dy<span class="token operator">**</span><span class="token number">2</span> <span class="token operator">+</span> dz<span class="token operator">**</span><span class="token number">2</span><span class="token punctuation">)</span>
+
+
+<span class="token keyword">def</span> <span class="token function">temporal_stabilize</span><span class="token punctuation">(</span>cam<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    translate_knob <span class="token operator">=</span> cam<span class="token punctuation">[</span><span class="token string">"translate"</span><span class="token punctuation">]</span>
+
+    t_x <span class="token operator">=</span> translate_knob<span class="token punctuation">.</span>animation<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span>
+    t_y <span class="token operator">=</span> translate_knob<span class="token punctuation">.</span>animation<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+    t_z <span class="token operator">=</span> translate_knob<span class="token punctuation">.</span>animation<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>
+
+    first <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">(</span>t_x<span class="token punctuation">.</span>keys<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>x<span class="token punctuation">)</span>
+    last <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">(</span>t_x<span class="token punctuation">.</span>keys<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span>x<span class="token punctuation">)</span>
+
+    positions <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+    times <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+    distances <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+    total_distance <span class="token operator">=</span> <span class="token number">0</span>
+
+    previous_p <span class="token operator">=</span> Vec3<span class="token punctuation">(</span>t_x<span class="token punctuation">.</span>evaluate<span class="token punctuation">(</span>first<span class="token punctuation">)</span><span class="token punctuation">,</span> t_y<span class="token punctuation">.</span>evaluate<span class="token punctuation">(</span>first<span class="token punctuation">)</span><span class="token punctuation">,</span> t_z<span class="token punctuation">.</span>evaluate<span class="token punctuation">(</span>first<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    positions<span class="token punctuation">.</span>append<span class="token punctuation">(</span>previous_p<span class="token punctuation">)</span>
+    times<span class="token punctuation">.</span>append<span class="token punctuation">(</span>first<span class="token punctuation">)</span>
+
+    <span class="token keyword">for</span> frame <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span>first <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> last <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        this_p <span class="token operator">=</span> Vec3<span class="token punctuation">(</span>t_x<span class="token punctuation">.</span>evaluate<span class="token punctuation">(</span>frame<span class="token punctuation">)</span><span class="token punctuation">,</span> t_y<span class="token punctuation">.</span>evaluate<span class="token punctuation">(</span>frame<span class="token punctuation">)</span><span class="token punctuation">,</span> t_z<span class="token punctuation">.</span>evaluate<span class="token punctuation">(</span>frame<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        d <span class="token operator">=</span> Vec3<span class="token punctuation">.</span>get_distance<span class="token punctuation">(</span>previous_p<span class="token punctuation">,</span> this_p<span class="token punctuation">)</span>
+        total_distance <span class="token operator">+=</span> d
+        distances<span class="token punctuation">.</span>append<span class="token punctuation">(</span>total_distance<span class="token punctuation">)</span>
+        positions<span class="token punctuation">.</span>append<span class="token punctuation">(</span>this_p<span class="token punctuation">)</span>
+        times<span class="token punctuation">.</span>append<span class="token punctuation">(</span>frame<span class="token punctuation">)</span>
+        previous_p <span class="token operator">=</span> this_p
+
+    <span class="token comment"># Calculate the average velocity</span>
+    average_velocity <span class="token operator">=</span> total_distance <span class="token operator">/</span> <span class="token punctuation">(</span>last <span class="token operator">-</span> first<span class="token punctuation">)</span>
+
+    <span class="token comment"># Create new time array where time change is inversely proportional to velocity</span>
+    new_times <span class="token operator">=</span> <span class="token punctuation">[</span>first<span class="token punctuation">]</span>
+    <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>times<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        segment_distance <span class="token operator">=</span> distances<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">-</span> distances<span class="token punctuation">[</span>i <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span>
+        segment_time <span class="token operator">=</span> times<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">-</span> times<span class="token punctuation">[</span>i <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span>
+        segment_velocity <span class="token operator">=</span> <span class="token punctuation">(</span>
+            segment_distance <span class="token operator">/</span> segment_time <span class="token keyword">if</span> segment_time <span class="token operator">!=</span> <span class="token number">0</span> <span class="token keyword">else</span> average_velocity
+        <span class="token punctuation">)</span>
+        time_factor <span class="token operator">=</span> segment_velocity <span class="token operator">/</span> average_velocity
+        new_segment_time <span class="token operator">=</span> segment_time <span class="token operator">*</span> time_factor
+        new_times<span class="token punctuation">.</span>append<span class="token punctuation">(</span>new_times<span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">+</span> new_segment_time<span class="token punctuation">)</span>
+
+    <span class="token comment"># Normalize new_times to fit within the original frame range</span>
+    new_times <span class="token operator">=</span> <span class="token punctuation">[</span>
+        first <span class="token operator">+</span> <span class="token punctuation">(</span>t <span class="token operator">-</span> first<span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token punctuation">(</span>last <span class="token operator">-</span> first<span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token punctuation">(</span>new_times<span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">-</span> first<span class="token punctuation">)</span> <span class="token keyword">for</span> t <span class="token keyword">in</span> new_times
+    <span class="token punctuation">]</span>
+
+
+    <span class="token comment"># Create lookup table</span>
+    flatten <span class="token operator">=</span> nuke<span class="token punctuation">.</span>createNode<span class="token punctuation">(</span><span class="token string">"TimeWarp"</span><span class="token punctuation">)</span>
+    flatten<span class="token punctuation">[</span><span class="token string">"label"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>setValue<span class="token punctuation">(</span><span class="token string">"flatten"</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">for</span> original_time<span class="token punctuation">,</span> new_time <span class="token keyword">in</span> <span class="token builtin">zip</span><span class="token punctuation">(</span>times<span class="token punctuation">,</span> new_times<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        l <span class="token operator">=</span> flatten<span class="token punctuation">[</span><span class="token string">"lookup"</span><span class="token punctuation">]</span>
+        l<span class="token punctuation">.</span>setAnimated<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        flatten<span class="token punctuation">[</span><span class="token string">"lookup"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>setValueAt<span class="token punctuation">(</span>original_time<span class="token punctuation">,</span> new_time<span class="token punctuation">)</span>
+
+    <span class="token builtin">apply</span> <span class="token operator">=</span> nuke<span class="token punctuation">.</span>createNode<span class="token punctuation">(</span><span class="token string">"TimeWarp"</span><span class="token punctuation">)</span>
+    <span class="token builtin">apply</span><span class="token punctuation">[</span><span class="token string">"label"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>setValue<span class="token punctuation">(</span><span class="token string">"apply"</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">for</span> original_time<span class="token punctuation">,</span> new_time <span class="token keyword">in</span> <span class="token builtin">zip</span><span class="token punctuation">(</span>times<span class="token punctuation">,</span> new_times<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        l <span class="token operator">=</span> <span class="token builtin">apply</span><span class="token punctuation">[</span><span class="token string">"lookup"</span><span class="token punctuation">]</span>
+        l<span class="token punctuation">.</span>setAnimated<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token builtin">apply</span><span class="token punctuation">[</span><span class="token string">"lookup"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>setValueAt<span class="token punctuation">(</span>new_time<span class="token punctuation">,</span> original_time<span class="token punctuation">)</span>
+
+</code></pre>
+
+    </main>
+    <script src="/js/copy-button.js"></script>
+    <script src="/js/prism.js"></script>
+</body>
+</html>

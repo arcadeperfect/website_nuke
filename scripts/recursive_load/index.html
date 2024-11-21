@@ -1,0 +1,130 @@
+<!-- src/_layouts/base.njk -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recursive Load - Search folder and subfolders for sequences</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/prism-tomorrow.css">
+</head>
+<body>
+    <nav class="nav">
+        <a href="/" class="home-link">← nuke</a>
+        <a href="https://alexharding.ooo">↑ alexharding.ooo</a>
+    </nav>
+    <main>
+        <h1>Recursive Load</h1>
+<p>Provide a path and search all sub folders for image sequences, images and movie files, then load as read nodes.</p>
+<p>It works but does not format the generated nodes well, and they sometimes appear in a drastic location. A fancier version is in the works.</p>
+<pre class="language-python"><code class="language-python"><span class="token triple-quoted-string string">"""
+MIT License - see https://opensource.org/licenses/MIT
+Copyright (c) [2024] [alex harding] alexharding.ooo
+Permission is granted to use, copy, modify, and distribute this software and its documentation, provided that all copies include the copyright notice and this permission notice.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+
+Temporal Stabilizer Classic v0.1
+Analyzes a camera's velocity and generates two timewarp nodes.
+The first removes variation in velocity.
+The second reapplies it.
+They can be applied to both the camera and it's associated footage if it was tracked.
+"""</span>
+
+<span class="token keyword">import</span> os
+
+
+<span class="token keyword">def</span> <span class="token function">scan</span><span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
+    Recursively scans a directory for image sequences and still images.
+
+    Args:
+        p (str): The path to the directory to scan.
+
+    Returns:
+        tuple: A tuple containing two lists:
+            - sequences (list): A list of file paths that are part of image sequences.
+            - still_images (list): A list of file paths that are still images.
+    """</span>
+    image_formats <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token string">"jpeg"</span><span class="token punctuation">,</span> <span class="token string">"jpg"</span><span class="token punctuation">,</span> <span class="token string">"tiff"</span><span class="token punctuation">,</span> <span class="token string">"exr"</span><span class="token punctuation">,</span> <span class="token string">"dpx"</span><span class="token punctuation">]</span>
+    sequences <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+    still_images <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+
+    <span class="token keyword">if</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>isdir<span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token comment"># find file sequences</span>
+        <span class="token keyword">if</span> nuke<span class="token punctuation">.</span>getFileNameList<span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">:</span>
+            seqs <span class="token operator">=</span> nuke<span class="token punctuation">.</span>getFileNameList<span class="token punctuation">(</span>p<span class="token punctuation">)</span>
+            <span class="token comment"># filter out directories</span>
+            seqs <span class="token operator">=</span> <span class="token punctuation">[</span>
+                os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>join<span class="token punctuation">(</span>p<span class="token punctuation">,</span> seq<span class="token punctuation">)</span>
+                <span class="token keyword">for</span> seq <span class="token keyword">in</span> seqs
+                <span class="token keyword">if</span> <span class="token keyword">not</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>isdir<span class="token punctuation">(</span>os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>join<span class="token punctuation">(</span>p<span class="token punctuation">,</span> seq<span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token punctuation">]</span>
+            <span class="token keyword">if</span> seqs<span class="token punctuation">:</span>
+                <span class="token comment"># get still images</span>
+                stim <span class="token operator">=</span> <span class="token punctuation">[</span>
+                    seq
+                    <span class="token keyword">for</span> seq <span class="token keyword">in</span> seqs
+                    <span class="token keyword">if</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>splitext<span class="token punctuation">(</span>seq<span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token punctuation">]</span> <span class="token keyword">in</span> image_formats
+                <span class="token punctuation">]</span>
+                <span class="token keyword">if</span> stim<span class="token punctuation">:</span>
+                    still_images<span class="token punctuation">.</span>extend<span class="token punctuation">(</span>stim<span class="token punctuation">)</span>
+
+                <span class="token comment"># filter out non sequences</span>
+                seqs <span class="token operator">=</span> <span class="token punctuation">[</span>
+                    seq
+                    <span class="token keyword">for</span> seq <span class="token keyword">in</span> seqs
+                    <span class="token keyword">if</span> <span class="token punctuation">(</span>
+                        <span class="token string">" "</span> <span class="token keyword">in</span> seq
+                        <span class="token keyword">and</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>splitext<span class="token punctuation">(</span>seq<span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">" "</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token punctuation">]</span> <span class="token keyword">in</span> image_formats
+                    <span class="token punctuation">)</span>
+                <span class="token punctuation">]</span>
+                <span class="token keyword">if</span> seqs<span class="token punctuation">:</span>
+                    sequences<span class="token punctuation">.</span>extend<span class="token punctuation">(</span>seqs<span class="token punctuation">)</span>
+
+    <span class="token keyword">for</span> i <span class="token keyword">in</span> os<span class="token punctuation">.</span>listdir<span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        np <span class="token operator">=</span> p <span class="token operator">+</span> i <span class="token operator">+</span> <span class="token string">"/"</span>
+        <span class="token keyword">if</span> <span class="token keyword">not</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>isdir<span class="token punctuation">(</span>np<span class="token punctuation">)</span><span class="token punctuation">:</span>
+            <span class="token keyword">continue</span>
+        new_scan <span class="token operator">=</span> scan<span class="token punctuation">(</span>np<span class="token punctuation">)</span>
+        sequences<span class="token punctuation">.</span>extend<span class="token punctuation">(</span>new_scan<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+        still_images<span class="token punctuation">.</span>extend<span class="token punctuation">(</span>new_scan<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> sequences<span class="token punctuation">,</span> still_images
+
+
+<span class="token keyword">def</span> <span class="token function">recLoad</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
+    Prompts the user to choose a folder and loads sequences of files into Nuke.
+
+    This function performs the following steps:
+    1. Prompts the user to select a folder using Nuke's getClipname dialog.
+    2. Scans the selected folder for sequences of files.
+    3. For each sequence found, creates a Nuke Read node with the appropriate file path and frame range.
+    4. For each individual file found, creates a Nuke Read node with the file path.
+
+    Note:
+        - The function assumes that the scan function is defined elsewhere and returns a tuple of two lists:
+          the first list contains sequences with frame ranges, and the second list contains individual files.
+        - The Nuke Read node is used to read image sequences or individual image files into Nuke.
+
+    Returns:
+        None
+    """</span>
+    path <span class="token operator">=</span> nuke<span class="token punctuation">.</span>getClipname<span class="token punctuation">(</span><span class="token string">"Choose Folder"</span><span class="token punctuation">,</span> multiple<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">)</span>
+    allSequences <span class="token operator">=</span> scan<span class="token punctuation">(</span>path<span class="token punctuation">)</span>
+
+    <span class="token keyword">for</span> i <span class="token keyword">in</span> allSequences<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">:</span>
+        n <span class="token operator">=</span> nuke<span class="token punctuation">.</span>nodes<span class="token punctuation">.</span>Read<span class="token punctuation">(</span>
+            <span class="token builtin">file</span><span class="token operator">=</span>i<span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">" "</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+            first<span class="token operator">=</span>i<span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">" "</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">"-"</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+            last<span class="token operator">=</span>i<span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">" "</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">"-"</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+        <span class="token punctuation">)</span>
+
+    <span class="token keyword">for</span> i <span class="token keyword">in</span> allSequences<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">:</span>
+        n <span class="token operator">=</span> nuke<span class="token punctuation">.</span>nodes<span class="token punctuation">.</span>Read<span class="token punctuation">(</span><span class="token builtin">file</span><span class="token operator">=</span>i<span class="token punctuation">)</span>
+</code></pre>
+
+    </main>
+    <script src="/js/copy-button.js"></script>
+    <script src="/js/prism.js"></script>
+</body>
+</html>
