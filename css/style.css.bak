@@ -1,0 +1,66 @@
+/* css/style.css */
+:root {
+    --bg-color: #1e1e1e;
+    --text-color: #d4d4d4;
+    --code-bg: #2d2d2d;
+  }
+  
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: -apple-system, system-ui, sans-serif;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  pre[class*="language-"] {
+    position: relative;
+    margin: 2rem 0;
+    padding: 2rem;
+    border-radius: 4px;
+  }
+  
+  .copy-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.5rem;
+    background: #444;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.875rem;
+  }
+  
+  .copy-button:hover {
+    background: #555;
+  }
+  
+  article {
+    background: #252525;
+    padding: 2rem;
+    margin: 2rem 0;
+    border-radius: 8px;
+  }
+  
+  h1, h2, h3 {
+    color: #7daf49;
+  }
+
+  a {
+    color: #15522d; /* your desired color */
+  }
+
+  a:visited {
+    color: #a892e6;  /* Or any color you prefer */
+  }
+
+  .nav {
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 4rem;  /* Adjust this value to control the exact spacing */
+}
