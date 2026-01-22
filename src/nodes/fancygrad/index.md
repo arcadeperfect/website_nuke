@@ -21,14 +21,22 @@ Either sample the corners, the corners and the center of each edge, or each pixe
 ```python
 # THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
 set cut_paste_input [stack 0]
-version 15.0 v4
+version 14.1 v5
 push $cut_paste_input
 Group {
  name FancyGrad
  selected true
- xpos -225
- ypos 88
- addUserKnob {20 User}
+ xpos -363
+ ypos -16
+ addUserKnob {20 Grad}
+ addUserKnob {12 to1}
+ to1 {2040 1110}
+ addUserKnob {12 to2}
+ to2 {4815 1225}
+ addUserKnob {12 to3}
+ to3 {4430 3160}
+ addUserKnob {12 to4}
+ to4 {1860 3140}
  addUserKnob {41 premult T ctrl.premult}
  addUserKnob {41 samples T ctrl.samples}
  addUserKnob {41 off l "sample size" T ctrl.off}
@@ -37,10 +45,7 @@ Group {
  addUserKnob {41 size_2 l "blur patch" T BlurPatch.size}
  addUserKnob {41 falloff T ctrl.falloff}
  addUserKnob {26 ""}
- addUserKnob {41 from1 T CP_out.from1}
- addUserKnob {41 from2 T CP_out.from2}
- addUserKnob {41 from3 T CP_out.from3}
- addUserKnob {41 from4 T CP_out.from4}
+ addUserKnob {26 ""}
  addUserKnob {20 loads l "loads-of-samples settings"}
  addUserKnob {41 size_3 l "iBlur patch" T iblur_patch.size}
  addUserKnob {7 mmult l "iBlur Blend Matte" R 0 2}
@@ -69,6 +74,23 @@ Group {
   bdwidth 1123
   bdheight 396
  }
+ NoOp {
+  inputs 0
+  name ctrl
+  xpos -1438
+  ypos 210
+  addUserKnob {20 User}
+  addUserKnob {7 off R 0 500}
+  off 1
+  addUserKnob {6 premult +STARTLINE}
+  premult true
+  addUserKnob {4 samples M {8 4 loads ""}}
+  samples loads
+  addUserKnob {7 falloff}
+  falloff 0.43
+  addUserKnob {7 blurAlpha l "bur alpha" R 0 50}
+  blurAlpha 50
+ }
  Input {
   inputs 0
   name Input1
@@ -82,42 +104,436 @@ Group {
   addUserKnob {20 User}
   addUserKnob {7 test}
  }
-set Nb684ac00 [stack 0]
+set N4880c00 [stack 0]
  Dot {
   name Dot1
   xpos -1156
-  ypos 210
+  ypos 166
  }
-set Nb6841c00 [stack 0]
- NoOp {
-  name FormatReceiver
-  xpos -1311
-  ypos 351
+set N4881000 [stack 0]
+ Blur {
+  name BlurInput
+  xpos -1190
+  ypos 198
  }
-push $Nb684ac00
- Shuffle {
-  red black
-  green black
-  blue black
-  alpha black
-  name Shuffle1
-  xpos -1035
-  ypos 253
+ Transform {
+  translate {{parent.ttt.translate} {parent.ttt.translate}}
+  rotate {{parent.ttt.rotate}}
+  scale {{parent.ttt.scale}}
+  skewX {{parent.ttt.skewX}}
+  skewY {{parent.ttt.skewY}}
+  center {{parent.ttt.center} {parent.ttt.center}}
+  invert_matrix true
+  name ttt1
+  knobChanged print('ttt')
+  xpos -1190
+  ypos 234
  }
  CornerPin2D {
-  to1 {0 0}
-  to2 {{width} 0}
-  to3 {{width x1 1930 1956} {height x1 956 1032}}
-  to4 {0 {height}}
+  to1 {569 792}
+  to2 {1637 366}
+  to3 {1927 1990}
+  to4 {526 1602}
   invert true
+  from1 {0 0}
+  from2 {{input.width} 0}
+  from3 {{input.width} {input.height}}
+  from4 {0 {input.height}}
+  name CornerPin2D2
+  xpos -1190
+  ypos 293
+  disable true
+ }
+ CornerPin2D {
+  to1 {{parent.___MainCP_A2.to1} {parent.___MainCP_A2.to1}}
+  to2 {{parent.___MainCP_A2.to2} {parent.___MainCP_A2.to2}}
+  to3 {{parent.___MainCP_A2.to3} {parent.___MainCP_A2.to3}}
+  to4 {{parent.___MainCP_A2.to4} {parent.___MainCP_A2.to4}}
+  invert false
   shutter 1.45
-  from1 {{CP_out.from1.x} {CP_out.from1.y}}
-  from2 {{CP_out.from2.x x1 1616} {CP_out.from2.y x1 312}}
-  from3 {{CP_out.from3.x x1 1588} {CP_out.from3.y x1 1052}}
-  from4 {{CP_out.from4.x} {CP_out.from4.y}}
-  name ___MainCP_A2
-  xpos -1035
-  ypos 279
+  from1 {{parent.___MainCP_A2.from1} {parent.___MainCP_A2.from1}}
+  from2 {{parent.___MainCP_A2.from2} {parent.___MainCP_A2.from2}}
+  from3 {{parent.___MainCP_A2.from3} {parent.___MainCP_A2.from3}}
+  from4 {{parent.___MainCP_A2.from4} {parent.___MainCP_A2.from4}}
+  name CP_in
+  xpos -1190
+  ypos 331
+ }
+set N48aa400 [stack 0]
+ Dot {
+  name Dot4
+  xpos -1359
+  ypos 309
+ }
+set N48aac00 [stack 0]
+ Crop {
+  box {0 {height-ctrl.off} {ctrl.off} {height}}
+  reformat true
+  crop false
+  name Crop25
+  xpos -3194
+  ypos 1483
+  hide_input true
+ }
+ Reformat {
+  type "to box"
+  box_width {{FormatReceiver.width}}
+  box_height {{FormatReceiver.height}}
+  box_fixed true
+  resize distort
+  name Reformat12
+  xpos -3194
+  ypos 1509
+  postage_stamp true
+ }
+ Reformat {
+  type "to box"
+  box_width {{FormatReceiver.width}}
+  box_height {{FormatReceiver.height}}
+  box_fixed true
+  resize distort
+  name Reformat8
+  xpos -3194
+  ypos 1588
+ }
+set N48abc00 [stack 0]
+ Dot {
+  name Dot7
+  xpos -3054
+  ypos 1659
+ }
+ Expression {
+  inputs 0
+  expr3 y/height<0.5?y/height*2:(1-(y/height))*2
+  name Expression27
+  xpos 2600
+  ypos 2486
+ }
+ Expression {
+  inputs 0
+  expr3 x/width<0.5?x/width*2:(1-(x/width))*2
+  name Expression26
+  xpos 2710
+  ypos 2486
+ }
+ Expression {
+  inputs 0
+  expr3 y/height<0.5?y/height*2:(1-(y/height))*2
+  name Expression24
+  xpos 2820
+  ypos 2486
+ }
+ Grade {
+  inputs 0
+  white 0
+  add {1 0 0 0}
+  add_panelDropped true
+  black_clamp false
+  name Grade5
+  xpos -1854
+  ypos 1663
+ }
+ Expression {
+  inputs 0
+  expr3 x/width<=y/height&&x/width>=1-(y/height)||x/width>=y/height&&x/width<=1-(y/height)?(1*y/height*2):0
+  name Expression25
+  xpos 2488
+  ypos 2485
+ }
+ Constant {
+  inputs 0
+  channels rgb
+  format "512 512 0 0 512 512 1 square_512"
+  name Constant1
+  xpos 797
+  ypos 2038
+ }
+ Expression {
+  expr0 x/width
+  expr1 y/height
+  name Expression19
+  xpos 797
+  ypos 2129
+ }
+ Transform {
+  rotate 45
+  scale 1.44
+  center {256 256}
+  shutteroffset centred
+  name Transform1
+  xpos 797
+  ypos 2155
+ }
+ Grade {
+  blackpoint {0.01501464844 0.4960965812 0 1}
+  whitepoint {0.9836945534 0.498046875 0 1}
+  black_clamp false
+  name Grade6
+  xpos 811
+  ypos 2187
+  disable true
+ }
+push $N48aa400
+ Crop {
+  box {0 {height-1} {width x1043 3414} {height x1043 12197}}
+  crop false
+  name Crop18
+  xpos 1854
+  ypos -104
+  hide_input true
+  postage_stamp true
+ }
+ Grade {
+  white 0
+  add {0 1 0 0}
+  add_panelDropped true
+  black_clamp false
+  name Grade9
+  xpos 1854
+  ypos -32
+  postage_stamp true
+ }
+push $N48aa400
+ Crop {
+  box {{0 x1043 3413} 0 1 {height}}
+  crop false
+  name Crop17
+  xpos 1488
+  ypos 263
+  hide_input true
+  postage_stamp true
+ }
+ Grade {
+  white 0
+  add {1 0 0 0}
+  add_panelDropped true
+  black_clamp false
+  name Grade8
+  xpos 1488
+  ypos 335
+  postage_stamp true
+ }
+ Expression {
+  inputs 0
+  expr0 (x/width+y/height)/2
+  expr1 (x/width+y/height)/2
+  expr2 (x/width+y/height)/2
+  expr3 (x/width+y/height)/2
+  name Expression21
+  xpos 2419
+  ypos 604
+  postage_stamp true
+ }
+push $N48aa400
+ Crop {
+  box {0 0 {width} 1}
+  crop false
+  name Crop19
+  xpos 1871
+  ypos 676
+  hide_input true
+  postage_stamp true
+ }
+ Grade {
+  white 0
+  add {-1 1 1 0}
+  add_panelDropped true
+  black_clamp false
+  name Grade10
+  xpos 1871
+  ypos 604
+  postage_stamp true
+ }
+push $N48aa400
+ Crop {
+  box {{width-1 x1043 3413} 0 {width} {height}}
+  crop false
+  name Crop16
+  xpos 2206
+  ypos 238
+  hide_input true
+  postage_stamp true
+ }
+ Grade {
+  white 0
+  add {0 0 1 0}
+  add_panelDropped true
+  black_clamp false
+  name Grade7
+  xpos 2206
+  ypos 310
+  postage_stamp true
+ }
+ Keymix {
+  inputs 3
+  name Keymix19
+  xpos 2206
+  ypos 598
+  postage_stamp true
+ }
+ Expression {
+  inputs 0
+  expr0 (x/width+y/height)/2
+  expr1 (x/width+y/height)/2
+  expr2 (x/width+y/height)/2
+  expr3 (x/width+y/height)/2
+  name Expression29
+  xpos 3052
+  ypos 46
+  postage_stamp true
+ }
+ Expression {
+  inputs 0
+  expr0 y/height
+  expr1 y/height
+  expr2 y/height
+  expr3 y/height
+  name Expression30
+  xpos 2576
+  ypos 904
+  postage_stamp true
+ }
+set N14359800 [stack 0]
+ Mirror2 {
+  flip true
+  name Mirror2_6
+  xpos 2466
+  ypos 1021
+ }
+push $N14359800
+ Merge2 {
+  inputs 2
+  operation multiply
+  name Merge6
+  xpos 2576
+  ypos 1021
+ }
+ Grade {
+  channels all
+  white 4
+  black_clamp false
+  name Grade14
+  xpos 2576
+  ypos 1047
+ }
+ Expression {
+  inputs 0
+  expr0 x/width
+  expr1 x/width
+  expr2 x/width
+  expr3 x/width
+  name Expression22
+  xpos 2349
+  ypos 990
+  postage_stamp true
+ }
+set N14398800 [stack 0]
+ Mirror2 {
+  flop true
+  name Mirror2_5
+  xpos 2239
+  ypos 1107
+ }
+push $N14398800
+ Merge2 {
+  inputs 2
+  operation multiply
+  name Merge5
+  xpos 2349
+  ypos 1107
+ }
+ Grade {
+  channels all
+  white 4
+  black_clamp false
+  name Grade13
+  xpos 2349
+  ypos 1133
+ }
+ Merge2 {
+  inputs 2
+  operation multiply
+  name Merge4
+  xpos 2576
+  ypos 1116
+  postage_stamp true
+ }
+ Expression {
+  inputs 0
+  expr0 x/width
+  expr1 x/width
+  expr2 x/width
+  expr3 x/width
+  name Expression31
+  xpos 1011
+  ypos 671
+  postage_stamp true
+ }
+ Expression {
+  inputs 0
+  expr0 y/height
+  expr1 y/height
+  expr2 y/height
+  expr3 y/height
+  name Expression28
+  xpos 1252
+  ypos 802
+  postage_stamp true
+ }
+ Expression {
+  inputs 0
+  expr0 y/height
+  expr1 y/height
+  expr2 y/height
+  expr3 y/height
+  name Expression32
+  xpos 1719
+  ypos 355
+  postage_stamp true
+ }
+ Reformat {
+  inputs 0
+  type scale
+  turn true
+  name Reformat15
+  xpos 1438
+  ypos 536
+  postage_stamp true
+ }
+ Expression {
+  inputs 0
+  expr0 (x/width+y/height)/2
+  expr1 (x/width+y/height)/2
+  expr2 (x/width+y/height)/2
+  expr3 (x/width+y/height)/2
+  name Expression20
+  xpos 1267
+  ypos 537
+  postage_stamp true
+ }
+set N143e1000 [stack 0]
+ Mirror2 {
+  flip true
+  name Mirror2_3
+  xpos 1211
+  ypos 651
+ }
+push $N143e1000
+ Merge2 {
+  inputs 2
+  operation multiply
+  name Merge2
+  xpos 1321
+  ypos 651
+ }
+ Constant {
+  inputs 0
+  channels alpha
+  color 1
+  format "3414 2198 0 0 3414 2198 2 "
+  name Constant4
+  xpos 750
+  ypos 4812
  }
  Reformat {
   inputs 0
@@ -142,7 +558,7 @@ push $Nb684ac00
   xpos 466
   ypos 2383
  }
-set N3005fa00 [stack 0]
+set N14416c00 [stack 0]
  Dot {
   name Dot8
   xpos 466
@@ -155,7 +571,7 @@ set N3005fa00 [stack 0]
   xpos 145
   ypos 2489
  }
-push $N3005fa00
+push $N14416c00
  Reformat {
   inputs 0
   type "to box"
@@ -174,8 +590,8 @@ push $N3005fa00
   xpos 500
   ypos 1954
  }
-set N30c58000 [stack 0]
-push $N30c58000
+set N14448000 [stack 0]
+push $N14448000
  Mirror2 {
   flop true
   name Mirror2_1
@@ -189,14 +605,14 @@ push $N30c58000
   xpos 500
   ypos 2028
  }
-set N30d44600 [stack 0]
+set N14448800 [stack 0]
  Mirror2 {
   flip true
   name Mirror2_2
   xpos 362
   ypos 2085
  }
-push $N30d44600
+push $N14448800
  Merge2 {
   inputs 2
   operation screen
@@ -212,7 +628,6 @@ push $N30d44600
  Group {
   inputs 2
   name iblur_matte
-  selected true
   xpos 278
   ypos 2380
   addUserKnob {20 User}
@@ -317,7 +732,7 @@ push $N30d44600
    ypos -499
    disable true
   }
-set N30dbca00 [stack 0]
+set N1447e000 [stack 0]
   Grade {
    blackpoint {{lower i}}
    whitepoint {{upper i}}
@@ -418,13 +833,13 @@ set N30dbca00 [stack 0]
    ypos -525
    disable true
   }
-set N9c81a000 [stack 0]
+set N1447f000 [stack 0]
   Dot {
    name Dot14
    xpos 940
    ypos -499
   }
-set N9c8a7800 [stack 0]
+set N1447f400 [stack 0]
   Blur {
    channels rgba
    size {{width/2*mmult}}
@@ -452,7 +867,7 @@ set N9c8a7800 [stack 0]
    ypos 120
    disable true
   }
-push $N30dbca00
+push $N1447e000
   Grade {
    blackpoint {{lower i}}
    whitepoint {{upper i}}
@@ -478,7 +893,7 @@ push $N30dbca00
    xpos 2600
    ypos 94
   }
-push $N9c8a7800
+push $N1447f400
   Blur {
    channels rgba
    size {{parent.MasterBlur.size/num*mult i}}
@@ -508,7 +923,7 @@ push $N9c8a7800
    ypos 120
    disable true
   }
-push $N30dbca00
+push $N1447e000
   Grade {
    blackpoint {{lower i}}
    whitepoint {{upper i}}
@@ -534,7 +949,7 @@ push $N30dbca00
    xpos 2380
    ypos 94
   }
-push $N9c8a7800
+push $N1447f400
   Blur {
    channels rgba
    size {{parent.MasterBlur.size/num*mult i}}
@@ -564,7 +979,7 @@ push $N9c8a7800
    ypos 120
    disable true
   }
-push $N30dbca00
+push $N1447e000
   Grade {
    blackpoint {{lower i}}
    whitepoint {{upper i}}
@@ -590,7 +1005,7 @@ push $N30dbca00
    xpos 2160
    ypos 94
   }
-push $N9c8a7800
+push $N1447f400
   Blur {
    channels rgba
    size {{parent.MasterBlur.size/num*mult i}}
@@ -620,7 +1035,7 @@ push $N9c8a7800
    ypos 120
    disable true
   }
-push $N30dbca00
+push $N1447e000
   Grade {
    blackpoint {{lower i}}
    whitepoint {{upper i}}
@@ -646,7 +1061,7 @@ push $N30dbca00
    xpos 1940
    ypos 94
   }
-push $N9c8a7800
+push $N1447f400
   Blur {
    channels rgba
    size {{parent.MasterBlur.size/num*mult i}}
@@ -676,7 +1091,7 @@ push $N9c8a7800
    ypos 120
    disable true
   }
-push $N30dbca00
+push $N1447e000
   Grade {
    blackpoint {{lower i}}
    whitepoint {{upper i}}
@@ -702,7 +1117,7 @@ push $N30dbca00
    xpos 1720
    ypos 94
   }
-push $N9c8a7800
+push $N1447f400
   Blur {
    channels rgba
    size {{parent.MasterBlur.size/num*mult i}}
@@ -732,7 +1147,7 @@ push $N9c8a7800
    ypos 120
    disable true
   }
-push $N30dbca00
+push $N1447e000
   Grade {
    blackpoint {{lower i}}
    whitepoint {{upper i}}
@@ -758,7 +1173,7 @@ push $N30dbca00
    xpos 1500
    ypos 94
   }
-push $N9c8a7800
+push $N1447f400
   Blur {
    channels rgba
    size {{parent.MasterBlur.size/num*mult i}}
@@ -788,7 +1203,7 @@ push $N9c8a7800
    ypos 120
    disable true
   }
-push $N30dbca00
+push $N1447e000
   Grade {
    blackpoint {{lower i}}
    whitepoint {{upper i}}
@@ -814,7 +1229,7 @@ push $N30dbca00
    xpos 1280
    ypos 94
   }
-push $N9c8a7800
+push $N1447f400
   Blur {
    channels rgba
    size {{parent.MasterBlur.size/num*mult i}}
@@ -844,7 +1259,7 @@ push $N9c8a7800
    ypos 120
    disable true
   }
-push $N30dbca00
+push $N1447e000
   Grade {
    blackpoint {{lower i}}
    whitepoint {{upper i}}
@@ -870,7 +1285,7 @@ push $N30dbca00
    xpos 1060
    ypos 94
   }
-push $N9c8a7800
+push $N1447f400
   Blur {
    channels rgba
    size {{parent.MasterBlur.size/num*mult i}}
@@ -900,7 +1315,7 @@ push $N9c8a7800
    ypos 120
    disable true
   }
-push $N30dbca00
+push $N1447e000
   Grade {
    blackpoint {{lower}}
    whitepoint {{upper}}
@@ -926,7 +1341,7 @@ push $N30dbca00
    xpos 840
    ypos 94
   }
-push $N9c8a7800
+push $N1447f400
   Blur {
    channels rgba
    size {{parent.MasterBlur.size/num*mult i}}
@@ -956,7 +1371,7 @@ push $N9c8a7800
    ypos 120
    disable true
   }
-push $N9c81a000
+push $N1447f000
   Keymix {
    inputs 3
    name Keymix15
@@ -1023,7 +1438,6 @@ push $N9c81a000
    ypos 146
   }
  end_group
-set N9c914000 [stack 0]
  Grade {
   channels alpha
   white_clamp true
@@ -1073,7 +1487,7 @@ set N9c914000 [stack 0]
   ypos 327
   disable true
  }
-set N9c83be00 [stack 0]
+set N146e3c00 [stack 0]
  Expression {
   expr3 (g<0.5?g:1-g)*2
   name Expression16
@@ -1102,7 +1516,7 @@ set N9c83be00 [stack 0]
   ypos 1805
   postage_stamp true
  }
-push $N9c83be00
+push $N146e3c00
  Expression {
   expr3 r
   name Expression14
@@ -1131,43 +1545,7 @@ push $N9c83be00
   ypos 1509
   postage_stamp true
  }
-push $Nb6841c00
- Blur {
-  name BlurInput
-  xpos -1193
-  ypos 232
- }
- CornerPin2D {
-  to1 {569 792}
-  to2 {1637 366}
-  to3 {1927 1990}
-  to4 {526 1602}
-  invert true
-  from1 {0 0}
-  from2 {{input.width} 0}
-  from3 {{input.width} {input.height}}
-  from4 {0 {input.height}}
-  name CornerPin2D2
-  xpos -1190
-  ypos 279
-  disable true
- }
- CornerPin2D {
-  to1 {{parent.___MainCP_A2.to1} {parent.___MainCP_A2.to1}}
-  to2 {{parent.___MainCP_A2.to2} {parent.___MainCP_A2.to2}}
-  to3 {{parent.___MainCP_A2.to3} {parent.___MainCP_A2.to3}}
-  to4 {{parent.___MainCP_A2.to4} {parent.___MainCP_A2.to4}}
-  invert false
-  shutter 1.45
-  from1 {{parent.___MainCP_A2.from1} {parent.___MainCP_A2.from1}}
-  from2 {{parent.___MainCP_A2.from2} {parent.___MainCP_A2.from2}}
-  from3 {{parent.___MainCP_A2.from3} {parent.___MainCP_A2.from3}}
-  from4 {{parent.___MainCP_A2.from4} {parent.___MainCP_A2.from4}}
-  name CP_in
-  xpos -1190
-  ypos 305
- }
-set N9c852a00 [stack 0]
+push $N48aa400
  Crop {
   box {{width-1 x1043 3413} 0 {width} {height}}
   crop false
@@ -1189,7 +1567,7 @@ set N9c852a00 [stack 0]
   disable true
   postage_stamp true
  }
-push $N9c852a00
+push $N48aa400
  Crop {
   box {{0 x1043 3413} 0 1 {height}}
   crop false
@@ -1218,8 +1596,8 @@ push $N9c852a00
   ypos 1581
   postage_stamp true
  }
-set N29209a00 [stack 0]
-push $N9c83be00
+set N1475c800 [stack 0]
+push $N146e3c00
  Expression {
   expr3 g
   name Expression15
@@ -1248,7 +1626,7 @@ push $N9c83be00
   ypos 1739
   postage_stamp true
  }
-push $N9c852a00
+push $N48aa400
  Crop {
   box {0 {height-1} {width x1043 3414} {height x1043 12197}}
   crop false
@@ -1270,8 +1648,7 @@ push $N9c852a00
   disable true
   postage_stamp true
  }
-set N2920d200 [stack 0]
-push $N9c852a00
+push $N48aa400
  Crop {
   box {0 0 {width} 1}
   crop false
@@ -1300,7 +1677,7 @@ push $N9c852a00
   ypos 1811
   postage_stamp true
  }
-set N291f5600 [stack 0]
+set N1479a800 [stack 0]
  Keymix {
   inputs 3
   name Keymix15
@@ -1308,7 +1685,7 @@ set N291f5600 [stack 0]
   ypos 2021
   postage_stamp true
  }
-push $N9c83be00
+push $N146e3c00
  Expression {
   expr3 (r<0.5?r:1-r)*2
   name Expression17
@@ -1337,8 +1714,8 @@ push $N9c83be00
   ypos 1816
   postage_stamp true
  }
-push $N291f5600
-push $N29209a00
+push $N1479a800
+push $N1475c800
  Keymix {
   inputs 3
   name Keymix16
@@ -1459,7 +1836,7 @@ push $N29209a00
    ypos -499
    disable true
   }
-set N2906ac00 [stack 0]
+set N147dac00 [stack 0]
   Grade {
    blackpoint {{lower i}}
    whitepoint {{upper i}}
@@ -1560,13 +1937,13 @@ set N2906ac00 [stack 0]
    ypos -525
    disable true
   }
-set N29079e00 [stack 0]
+set N147dbc00 [stack 0]
   Dot {
    name Dot14
    xpos 940
    ypos -499
   }
-set N2913e000 [stack 0]
+set N14860000 [stack 0]
   Blur {
    channels rgba
    size 100
@@ -1594,7 +1971,7 @@ set N2913e000 [stack 0]
    ypos 120
    disable true
   }
-push $N2906ac00
+push $N147dac00
   Grade {
    blackpoint {{lower i}}
    whitepoint {{upper i}}
@@ -1620,7 +1997,7 @@ push $N2906ac00
    xpos 2600
    ypos 94
   }
-push $N2913e000
+push $N14860000
   Blur {
    channels rgba
    size {{parent.MasterBlur.size/num*mult i}}
@@ -1650,7 +2027,7 @@ push $N2913e000
    ypos 120
    disable true
   }
-push $N2906ac00
+push $N147dac00
   Grade {
    blackpoint {{lower i}}
    whitepoint {{upper i}}
@@ -1676,7 +2053,7 @@ push $N2906ac00
    xpos 2380
    ypos 94
   }
-push $N2913e000
+push $N14860000
   Blur {
    channels rgba
    size {{parent.MasterBlur.size/num*mult i}}
@@ -1706,7 +2083,7 @@ push $N2913e000
    ypos 120
    disable true
   }
-push $N2906ac00
+push $N147dac00
   Grade {
    blackpoint {{lower i}}
    whitepoint {{upper i}}
@@ -1732,7 +2109,7 @@ push $N2906ac00
    xpos 2160
    ypos 94
   }
-push $N2913e000
+push $N14860000
   Blur {
    channels rgba
    size {{parent.MasterBlur.size/num*mult i}}
@@ -1762,7 +2139,7 @@ push $N2913e000
    ypos 120
    disable true
   }
-push $N2906ac00
+push $N147dac00
   Grade {
    blackpoint {{lower i}}
    whitepoint {{upper i}}
@@ -1788,7 +2165,7 @@ push $N2906ac00
    xpos 1940
    ypos 94
   }
-push $N2913e000
+push $N14860000
   Blur {
    channels rgba
    size {{parent.MasterBlur.size/num*mult i}}
@@ -1818,7 +2195,7 @@ push $N2913e000
    ypos 120
    disable true
   }
-push $N2906ac00
+push $N147dac00
   Grade {
    blackpoint {{lower i}}
    whitepoint {{upper i}}
@@ -1844,7 +2221,7 @@ push $N2906ac00
    xpos 1720
    ypos 94
   }
-push $N2913e000
+push $N14860000
   Blur {
    channels rgba
    size {{parent.MasterBlur.size/num*mult i}}
@@ -1874,7 +2251,7 @@ push $N2913e000
    ypos 120
    disable true
   }
-push $N2906ac00
+push $N147dac00
   Grade {
    blackpoint {{lower i}}
    whitepoint {{upper i}}
@@ -1900,7 +2277,7 @@ push $N2906ac00
    xpos 1500
    ypos 94
   }
-push $N2913e000
+push $N14860000
   Blur {
    channels rgba
    size {{parent.MasterBlur.size/num*mult i}}
@@ -1930,7 +2307,7 @@ push $N2913e000
    ypos 120
    disable true
   }
-push $N2906ac00
+push $N147dac00
   Grade {
    blackpoint {{lower i}}
    whitepoint {{upper i}}
@@ -1956,7 +2333,7 @@ push $N2906ac00
    xpos 1280
    ypos 94
   }
-push $N2913e000
+push $N14860000
   Blur {
    channels rgba
    size {{parent.MasterBlur.size/num*mult i}}
@@ -1986,7 +2363,7 @@ push $N2913e000
    ypos 120
    disable true
   }
-push $N2906ac00
+push $N147dac00
   Grade {
    blackpoint {{lower i}}
    whitepoint {{upper i}}
@@ -2012,7 +2389,7 @@ push $N2906ac00
    xpos 1060
    ypos 94
   }
-push $N2913e000
+push $N14860000
   Blur {
    channels rgba
    size {{parent.MasterBlur.size/num*mult i}}
@@ -2042,7 +2419,7 @@ push $N2913e000
    ypos 120
    disable true
   }
-push $N2906ac00
+push $N147dac00
   Grade {
    blackpoint {{lower}}
    whitepoint {{upper}}
@@ -2068,7 +2445,7 @@ push $N2906ac00
    xpos 840
    ypos 94
   }
-push $N2913e000
+push $N14860000
   Blur {
    channels rgba
    size {{parent.MasterBlur.size/num*mult i}}
@@ -2098,7 +2475,7 @@ push $N2913e000
    ypos 120
    disable true
   }
-push $N29079e00
+push $N147dbc00
   Keymix {
    inputs 3
    name Keymix15
@@ -2165,13 +2542,12 @@ push $N29079e00
    ypos 146
   }
  end_group
-set N29042600 [stack 0]
  Dot {
   name Dot3
   xpos -5
   ypos 2726
  }
-push $N9c83be00
+push $N146e3c00
  Expression {
   expr3 g
   name Expression13
@@ -2189,9 +2565,9 @@ push $N9c83be00
   mix {{parent.ctrl.falloff}}
   name ColorLookup11
   xpos 4425
-  ypos 2618
+  ypos 2616
  }
-push $N9c83be00
+push $N146e3c00
  Expression {
   expr3 r
   name Expression7
@@ -2211,13 +2587,13 @@ push $N9c83be00
   xpos 3875
   ypos 1872
  }
-push $N9c852a00
+push $N48aa400
  Dot {
   name Dot2
   xpos -933
   ypos 351
  }
-set N292bd200 [stack 0]
+set N14a72400 [stack 0]
  Crop {
   box {{width-ctrl.off x1234 2846} {height-ctrl.off} {width} {height}}
   reformat true
@@ -2248,7 +2624,7 @@ set N292bd200 [stack 0]
   xpos 4902
   ypos 1565
  }
-push $N292bd200
+push $N14a72400
  Crop {
   box {0 {height-ctrl.off} {ctrl.off} {height}}
   reformat true
@@ -2286,7 +2662,7 @@ push $N292bd200
   ypos 1849
   postage_stamp true
  }
-push $N9c83be00
+push $N146e3c00
  Expression {
   expr3 r
   name Expression12
@@ -2306,7 +2682,7 @@ push $N9c83be00
   xpos 3920
   ypos 3595
  }
-push $N292bd200
+push $N14a72400
  Crop {
   box {{width-ctrl.off} 0 {width x1042 2048} 0}
   reformat true
@@ -2337,7 +2713,7 @@ push $N292bd200
   xpos 5052
   ypos 3371
  }
-push $N292bd200
+push $N14a72400
  Crop {
   box {0 {ctrl.off} 0 {ctrl.off}}
   reformat true
@@ -2347,6 +2723,7 @@ push $N292bd200
   ypos 3220
   hide_input true
  }
+set N14acf000 [stack 0]
  Reformat {
   type "to box"
   box_width {{FormatReceiver.width}}
@@ -2382,7 +2759,7 @@ push $N292bd200
   ypos 2563
   postage_stamp true
  }
-push $N9c83be00
+push $N146e3c00
  Expression {
   expr3 r
   name Expression11
@@ -2390,7 +2767,7 @@ push $N9c83be00
   ypos 2463
   hide_input true
  }
-push $N9c83be00
+push $N146e3c00
  Expression {
   expr3 min(g*2,1)
   name Expression10
@@ -2410,7 +2787,7 @@ push $N9c83be00
   xpos -1440
   ypos 2585
  }
-push $N9c83be00
+push $N146e3c00
  Expression {
   expr3 max(0,g*2-1)
   name Expression8
@@ -2430,7 +2807,7 @@ push $N9c83be00
   xpos -1432
   ypos 2427
  }
-push $N9c83be00
+push $N146e3c00
  Expression {
   expr3 max(0,r*2-1)
   name Expression3
@@ -2450,13 +2827,7 @@ push $N9c83be00
   xpos -2719
   ypos 1811
  }
-push $N9c852a00
- Dot {
-  name Dot4
-  xpos -1359
-  ypos 309
- }
-set N292c8a00 [stack 0]
+push $N48aac00
  Crop {
   box {{width-ctrl.off x1234 2846} {height-ctrl.off} {width} {height}}
   reformat true
@@ -2487,7 +2858,7 @@ set N292c8a00 [stack 0]
   xpos -1788
   ypos 1619
  }
-push $N9c83be00
+push $N146e3c00
  Expression {
   expr3 min(r*2,1)
   name Expression2
@@ -2507,7 +2878,7 @@ push $N9c83be00
   xpos -2720
   ypos 1727
  }
-push $N292c8a00
+push $N48aac00
  Crop {
   box {{width/2-1} {height-2 x2 115} {width/2+1} {height}}
   reformat true
@@ -2538,38 +2909,7 @@ push $N292c8a00
   xpos -2477
   ypos 1623
  }
-push $N292c8a00
- Crop {
-  box {0 {height-ctrl.off} {ctrl.off} {height}}
-  reformat true
-  crop false
-  name Crop25
-  xpos -3194
-  ypos 1483
-  hide_input true
- }
- Reformat {
-  type "to box"
-  box_width {{FormatReceiver.width}}
-  box_height {{FormatReceiver.height}}
-  box_fixed true
-  resize distort
-  name Reformat12
-  xpos -3194
-  ypos 1509
-  postage_stamp true
- }
- Reformat {
-  type "to box"
-  box_width {{FormatReceiver.width}}
-  box_height {{FormatReceiver.height}}
-  box_fixed true
-  resize distort
-  name Reformat8
-  xpos -3194
-  ypos 1588
- }
-set N292cd600 [stack 0]
+push $N48abc00
  Keymix {
   inputs 3
   name Keymix1
@@ -2584,13 +2924,13 @@ set N292cd600 [stack 0]
   ypos 1756
   postage_stamp true
  }
-set N292ce200 [stack 0]
+set N14b65c00 [stack 0]
  Dot {
   name Dot18
   xpos -1636
   ypos 1731
  }
-push $N292c8a00
+push $N48aac00
  Crop {
   box {{width-1} {height/2-1} {width x2 2048} {height/2+1 x2 577}}
   reformat true
@@ -2628,7 +2968,7 @@ push $N292c8a00
   ypos 2463
   postage_stamp true
  }
-push $N9c83be00
+push $N146e3c00
  Expression {
   expr3 max(0,r*2-1)
   name Expression4
@@ -2648,7 +2988,7 @@ push $N9c83be00
   xpos -2273
   ypos 3111
  }
-push $N292c8a00
+push $N48aac00
  Crop {
   box {{width-ctrl.off} 0 {width x1042 2048} 0}
   reformat true
@@ -2679,7 +3019,7 @@ push $N292c8a00
   xpos -1638
   ypos 3425
  }
-push $N9c83be00
+push $N146e3c00
  Expression {
   expr3 min(r*2,1)
   name Expression5
@@ -2699,7 +3039,7 @@ push $N9c83be00
   xpos -2565
   ypos 3109
  }
-push $N292c8a00
+push $N48aac00
  Crop {
   box {{width/2-1} 0 {width/2+1} 1}
   reformat true
@@ -2730,7 +3070,7 @@ push $N292c8a00
   xpos -2418
   ypos 3231
  }
-push $N292c8a00
+push $N48aac00
  Crop {
   box {0 {ctrl.off} 0 {ctrl.off}}
   reformat true
@@ -2775,7 +3115,7 @@ push $N292c8a00
   ypos 3396
   postage_stamp true
  }
-set N292d8200 [stack 0]
+set N14c1ac00 [stack 0]
  Keymix {
   inputs 3
   name Keymix7
@@ -2783,7 +3123,7 @@ set N292d8200 [stack 0]
   ypos 2547
   postage_stamp true
  }
-push $N9c83be00
+push $N146e3c00
  Expression {
   expr3 min(g*2,1)
   name Expression6
@@ -2803,7 +3143,7 @@ push $N9c83be00
   xpos -3228
   ypos 2574
  }
-push $N9c83be00
+push $N146e3c00
  Expression {
   expr3 max(0,g*2-1)
   name Expression9
@@ -2823,8 +3163,8 @@ push $N9c83be00
   xpos -3241
   ypos 2457
  }
-push $N292ce200
-push $N292c8a00
+push $N14b65c00
+push $N48aac00
  Crop {
   box {0 {height/2-1} 1 {height/2+1 x2 49}}
   reformat true
@@ -2862,7 +3202,7 @@ push $N292c8a00
   ypos 2405
   postage_stamp true
  }
-push $N292d8200
+push $N14c1ac00
  Keymix {
   inputs 3
   name Keymix5
@@ -2902,7 +3242,7 @@ push $N292d8200
   xpos 937
   ypos 4961
  }
-set N292de000 [stack 0]
+set N15c50c00 [stack 0]
  Shuffle {
   red black
   green black
@@ -2918,7 +3258,7 @@ set N292de000 [stack 0]
   xpos 753
   ypos 5019
  }
-push $N292de000
+push $N15c50c00
  Copy {
   inputs 2
   from0 rgba.alpha
@@ -2929,20 +3269,27 @@ push $N292de000
  }
  CornerPin2D {
   to1 {{parent.___MainCP_A2.to1} {parent.___MainCP_A2.to1}}
-  to2 {{parent.___MainCP_A2.to2} {parent.___MainCP_A2.to2}}
-  to3 {{parent.___MainCP_A2.to3} {parent.___MainCP_A2.to3}}
+  to2 {{parent.___MainCP_A2.to2 x41 6415} {parent.___MainCP_A2.to2 x41 400}}
+  to3 {{parent.___MainCP_A2.to3 x1 6640} {parent.___MainCP_A2.to3 x1 4010}}
   to4 {{parent.___MainCP_A2.to4} {parent.___MainCP_A2.to4}}
   invert true
   black_outside false
   motionblur 0.04
   shutter 1.45
-  from1 {766 484}
-  from2 {1228 510}
-  from3 {1230 904}
-  from4 {728 858}
+  from1 {{parent.to1.x} {parent.to1.y}}
+  from2 {{parent.to2.x} {parent.to2.y}}
+  from3 {{parent.to3.x} {parent.to3.y}}
+  from4 {{parent.to4.x} {parent.to4.y}}
   name CP_out
   xpos 937
   ypos 5025
+ }
+ Transform {
+  center {3500 2470}
+  name ttt
+  knobChanged print('ttt')
+  xpos 937
+  ypos 5062
  }
  Blur {
   channels rgb
@@ -2954,12 +3301,12 @@ push $N292de000
   channels alpha
   name BlurAlpha
   xpos 937
-  ypos 5154
+  ypos 5174
  }
  Premult {
   name Premult1
   xpos 937
-  ypos 5180
+  ypos 5221
   disable {{1-ctrl.premult}}
  }
  Output {
@@ -2967,384 +3314,57 @@ push $N292de000
   xpos 937
   ypos 5280
  }
- NoOp {
-  inputs 0
-  name ctrl
-  xpos -1438
-  ypos 210
-  addUserKnob {20 User}
-  addUserKnob {7 off R 0 500}
-  addUserKnob {6 premult +STARTLINE}
-  premult true
-  addUserKnob {4 samples M {8 4 loads ""}}
-  samples loads
-  addUserKnob {7 falloff}
-  falloff 0.432
-  addUserKnob {7 blurAlpha l "bur alpha" R 0 50}
-  blurAlpha 50
- }
-push $N292cd600
- Dot {
-  name Dot7
-  xpos -3054
-  ypos 1659
- }
- Expression {
-  inputs 0
-  expr3 y/height<0.5?y/height*2:(1-(y/height))*2
-  name Expression27
-  xpos 2600
-  ypos 2486
- }
- Expression {
-  inputs 0
-  expr3 x/width<0.5?x/width*2:(1-(x/width))*2
-  name Expression26
-  xpos 2710
-  ypos 2486
- }
- Expression {
-  inputs 0
-  expr3 y/height<0.5?y/height*2:(1-(y/height))*2
-  name Expression24
-  xpos 2820
-  ypos 2486
- }
- Grade {
-  inputs 0
-  white 0
-  add {1 0 0 0}
-  add_panelDropped true
-  black_clamp false
-  name Grade5
-  xpos -1854
-  ypos 1663
- }
- Expression {
-  inputs 0
-  expr3 x/width<=y/height&&x/width>=1-(y/height)||x/width>=y/height&&x/width<=1-(y/height)?(1*y/height*2):0
-  name Expression25
-  xpos 2488
-  ypos 2485
- }
- Constant {
-  inputs 0
-  channels rgb
-  format "512 512 0 0 512 512 1 square_512"
-  name Constant1
-  xpos 797
-  ypos 2038
- }
- Expression {
-  expr0 x/width
-  expr1 y/height
-  name Expression19
-  xpos 797
-  ypos 2129
- }
  Transform {
-  rotate 45
-  scale 1.44
-  center {256 256}
-  shutteroffset centred
-  name Transform1
-  xpos 797
-  ypos 2155
- }
- Grade {
-  blackpoint {0.01501464844 0.4960965812 0 1}
-  whitepoint {0.9836945534 0.498046875 0 1}
-  black_clamp false
-  name Grade6
-  xpos 811
-  ypos 2187
-  disable true
- }
-push $N9c852a00
- Crop {
-  box {0 {height-1} {width x1043 3414} {height x1043 12197}}
-  crop false
-  name Crop18
-  xpos 1854
-  ypos -104
-  hide_input true
-  postage_stamp true
- }
- Grade {
-  white 0
-  add {0 1 0 0}
-  add_panelDropped true
-  black_clamp false
-  name Grade9
-  xpos 1854
-  ypos -32
-  postage_stamp true
- }
-push $N9c852a00
- Crop {
-  box {{0 x1043 3413} 0 1 {height}}
-  crop false
-  name Crop17
-  xpos 1488
-  ypos 263
-  hide_input true
-  postage_stamp true
- }
- Grade {
-  white 0
-  add {1 0 0 0}
-  add_panelDropped true
-  black_clamp false
-  name Grade8
-  xpos 1488
-  ypos 335
-  postage_stamp true
- }
- Expression {
   inputs 0
-  expr0 (x/width+y/height)/2
-  expr1 (x/width+y/height)/2
-  expr2 (x/width+y/height)/2
-  expr3 (x/width+y/height)/2
-  name Expression21
-  xpos 2419
-  ypos 604
-  postage_stamp true
+  center {1024 778}
+  name Transform2
+  xpos 609
+  ypos 4506
  }
-push $N9c852a00
- Crop {
-  box {0 0 {width} 1}
-  crop false
-  name Crop19
-  xpos 1871
-  ypos 676
-  hide_input true
-  postage_stamp true
+push $N4881000
+ NoOp {
+  name FormatReceiver
+  xpos -1348
+  ypos 120
  }
- Grade {
-  white 0
-  add {-1 1 1 0}
-  add_panelDropped true
-  black_clamp false
-  name Grade10
-  xpos 1871
-  ypos 604
-  postage_stamp true
+push $N4880c00
+ Shuffle {
+  red black
+  green black
+  blue black
+  alpha black
+  name Shuffle1
+  xpos -1035
+  ypos 253
  }
-push $N9c852a00
- Crop {
-  box {{width-1 x1043 3413} 0 {width} {height}}
-  crop false
-  name Crop16
-  xpos 2206
-  ypos 238
-  hide_input true
-  postage_stamp true
+ CornerPin2D {
+  to1 {0 0}
+  to2 {{width} 0}
+  to3 {{width x1 1930 1956} {height x1 956 1032}}
+  to4 {0 {height}}
+  invert true
+  shutter 1.45
+  from1 {{CP_out.from1.x} {CP_out.from1.y}}
+  from2 {{CP_out.from2.x x1 1616} {CP_out.from2.y x1 312}}
+  from3 {{CP_out.from3.x x1 1588} {CP_out.from3.y x1 1052}}
+  from4 {{CP_out.from4.x} {CP_out.from4.y}}
+  name ___MainCP_A2
+  xpos -1035
+  ypos 277
  }
- Grade {
-  white 0
-  add {0 0 1 0}
-  add_panelDropped true
-  black_clamp false
-  name Grade7
-  xpos 2206
-  ypos 310
-  postage_stamp true
- }
- Keymix {
-  inputs 3
-  name Keymix19
-  xpos 2206
-  ypos 598
-  postage_stamp true
- }
- Expression {
-  inputs 0
-  expr0 (x/width+y/height)/2
-  expr1 (x/width+y/height)/2
-  expr2 (x/width+y/height)/2
-  expr3 (x/width+y/height)/2
-  name Expression29
-  xpos 3052
-  ypos 46
-  postage_stamp true
- }
- Expression {
-  inputs 0
-  expr0 y/height
-  expr1 y/height
-  expr2 y/height
-  expr3 y/height
-  name Expression30
-  xpos 2576
-  ypos 904
-  postage_stamp true
- }
-set N9c9bac00 [stack 0]
- Mirror2 {
-  flip true
-  name Mirror2_6
-  xpos 2466
-  ypos 1021
- }
-push $N9c9bac00
- Merge2 {
-  inputs 2
-  operation multiply
-  name Merge6
-  xpos 2576
-  ypos 1021
- }
- Grade {
-  channels all
-  white 4
-  black_clamp false
-  name Grade14
-  xpos 2576
-  ypos 1047
- }
- Expression {
-  inputs 0
-  expr0 x/width
-  expr1 x/width
-  expr2 x/width
-  expr3 x/width
-  name Expression22
-  xpos 2349
-  ypos 990
-  postage_stamp true
- }
-set N9c9bee00 [stack 0]
- Mirror2 {
-  flop true
-  name Mirror2_5
-  xpos 2239
-  ypos 1107
- }
-push $N9c9bee00
- Merge2 {
-  inputs 2
-  operation multiply
-  name Merge5
-  xpos 2349
-  ypos 1107
- }
- Grade {
-  channels all
-  white 4
-  black_clamp false
-  name Grade13
-  xpos 2349
-  ypos 1133
- }
- Merge2 {
-  inputs 2
-  operation multiply
-  name Merge4
-  xpos 2576
-  ypos 1116
-  postage_stamp true
- }
- Expression {
-  inputs 0
-  expr0 x/width
-  expr1 x/width
-  expr2 x/width
-  expr3 x/width
-  name Expression31
-  xpos 1011
-  ypos 671
-  postage_stamp true
- }
- Expression {
-  inputs 0
-  expr0 y/height
-  expr1 y/height
-  expr2 y/height
-  expr3 y/height
-  name Expression28
-  xpos 1252
-  ypos 802
-  postage_stamp true
- }
- Expression {
-  inputs 0
-  expr0 y/height
-  expr1 y/height
-  expr2 y/height
-  expr3 y/height
-  name Expression32
-  xpos 1719
-  ypos 355
-  postage_stamp true
- }
- Reformat {
-  inputs 0
-  type scale
-  turn true
-  name Reformat15
-  xpos 1438
-  ypos 536
-  postage_stamp true
- }
- Expression {
-  inputs 0
-  expr0 (x/width+y/height)/2
-  expr1 (x/width+y/height)/2
-  expr2 (x/width+y/height)/2
-  expr3 (x/width+y/height)/2
-  name Expression20
-  xpos 1267
-  ypos 537
-  postage_stamp true
- }
-set N9c9c5000 [stack 0]
- Mirror2 {
-  flip true
-  name Mirror2_3
-  xpos 1211
-  ypos 651
- }
-push $N9c9c5000
- Merge2 {
-  inputs 2
-  operation multiply
-  name Merge2
-  xpos 1321
-  ypos 651
- }
- Constant {
-  inputs 0
-  channels alpha
-  color 1
-  format "3414 2198 0 0 3414 2198 2 "
-  name Constant4
-  xpos 750
-  ypos 4812
- }
-push $N2920d200
-push 0
-push 0
-push 0
-push 0
-push 0
-push 0
-push 0
-push $N29042600
-push $N9c914000
+push $N14acf000
  Viewer {
-  inputs 10
+  frame 1
   frame_range 1-100
-  colour_sample_bbox {-0.0234375 0.20703125 -0.021484375 0.208984375}
-  input_process false
-  monitorOutNDISenderName "NukeX - temp - Viewer1"
-  monitorOutOutputTransform rec709
+  viewerProcess "sRGB (ACES)"
+  monitorOutNDISenderName "Nuke - fancyGrad_v0.2 - Viewer1"
   name Viewer1
-  xpos -1294
-  ypos 478
-  hide_input true
+  selected true
+  xpos 1166
+  ypos 4985
  }
 end_group
+
 
 
 ```
