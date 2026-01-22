@@ -28,7 +28,7 @@ set cut_paste_input [stack 0]
 version 15.0 v4
 push $cut_paste_input
 Group {
- name Cam_timewarp_Classic2
+ name Cam_timewarp_Classic
  selected true
  xpos -206
  ypos 1043
